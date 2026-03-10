@@ -61,11 +61,11 @@ def send_to_slack(listings):
     if not listings:
         print("새로운 공고 없음")
         return
-
-    lines = ["*[i-boss 대행게시판] 오늘의 인플루언서/시딩/체험단 공고*\n"]
-    for item in listings:
-        lines.append(f"• <{item['link']}|{item['title']}>")
-
+    header = f"*[i-boss] 오늘의 공고 {len(listings)}개*"
+    lines = [header]
+    for i, item in enumerate(listings, 1):
+        title = item['title'][:40] + "..." if len(item['title']) > 40 else item['title']
+        lines.append(f"{i}. <{item['link']}|{title}>")
     payload = {"text": "\n".join(lines)}
     resp = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
     resp.raise_for_status()
