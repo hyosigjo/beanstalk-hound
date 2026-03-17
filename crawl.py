@@ -24,7 +24,7 @@ HEADERS = {
 def fetch_listings():
     resp = requests.get(TARGET_URL, headers=HEADERS, timeout=15)
     resp.raise_for_status()
-    resp.encoding = resp.apparent_encoding
+    resp.encoding = "utf-8"
     soup = BeautifulSoup(resp.text, "html.parser")
 
     results = []
