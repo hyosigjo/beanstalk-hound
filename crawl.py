@@ -53,6 +53,8 @@ def fetch_listings():
 
 def send_to_slack(listings):
     if not listings:
+        payload = {"text": "오늘은 새로운 공고가 안보이네요. 왈왈"}
+        requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10).raise_for_status()
         print("새로운 공고 없음")
         return
     header = f"*[i-boss] 오늘의 공고 {len(listings)}개*"
