@@ -39,12 +39,9 @@ def fetch_listings():
             continue
 
         href = a["href"]
-        if href.startswith("http"):
-            link = href
-        elif href.startswith("/"):
-            link = BASE_URL + href
-        else:
+        if not href.startswith("/ab-1958-"):
             continue
+        link = BASE_URL + href
 
         if any(r["link"] == link for r in results):
             continue
