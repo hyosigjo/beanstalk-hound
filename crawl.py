@@ -4,10 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.i-boss.co.kr"
-TARGET_URL = (
-    "https://www.i-boss.co.kr/insiter.php"
-    "?design_file=1957.php&search_value=%EC%9D%B8%ED%94%8C%EB%A3%A8%EC%96%B8%EC%84%9C"
-)
+TARGET_URL = "https://www.i-boss.co.kr/ab-1957"
 KEYWORDS = ["인플루언서", "시딩", "체험단"]
 EXCLUDE = "[마감]"
 
