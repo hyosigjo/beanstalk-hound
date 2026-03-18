@@ -1,13 +1,9 @@
 import os
-import re
 import requests
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.i-boss.co.kr"
-TARGET_URL = (
-    "https://www.i-boss.co.kr/insiter.php"
-    "?design_file=1957.php&search_value=%EC%9D%B8%ED%94%8C%EB%A3%A8%EC%96%B8%EC%84%9C"
-)
+TARGET_URL = "https://www.i-boss.co.kr/ab-1957"
 KEYWORDS = ["인플루언서", "시딩", "체험단"]
 EXCLUDE = "[마감]"
 
@@ -27,7 +23,7 @@ HEADERS = {
 def fetch_listings():
     resp = requests.get(TARGET_URL, headers=HEADERS, timeout=15)
     resp.raise_for_status()
-    resp.encoding = resp.apparent_encoding
+    resp.encoding = "utf-8"
     soup = BeautifulSoup(resp.text, "html.parser")
 
     results = []
@@ -42,12 +38,9 @@ def fetch_listings():
             continue
 
         href = a["href"]
-        if href.startswith("http"):
-            link = href
-        elif href.startswith("/"):
-            link = BASE_URL + href
-        else:
+        if not href.startswith("/ab-1958-"):
             continue
+        link = BASE_URL + href
 
         if any(r["link"] == link for r in results):
             continue
@@ -59,6 +52,8 @@ def fetch_listings():
 
 def send_to_slack(listings):
     if not listings:
+        payload = {"text": "오늘은 새로운 공고가 안보이네요. 왈왈"}
+        requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10).raise_for_status()
         print("새로운 공고 없음")
         return
     header = f"*[i-boss] 오늘의 공고 {len(listings)}개*"
