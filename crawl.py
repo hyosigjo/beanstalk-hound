@@ -68,7 +68,18 @@ def send_to_slack(listings):
 
 
 if __name__ == "__main__":
-    listings = fetch_listings()
+    try:
+        listings = fetch_listings()
+    except requests.exceptions.ConnectTimeout:
+        print("연결 타임아웃: i-boss.co.kr에 접근할 수 없습니다. (GitHub Actions IP 차단 가능성)")
+        payload = {"text": ":warning: i-boss 크롤링 실패: 사이트 연결 타임아웃 (GitHub Actions IP 차단)"}
+        requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10).raise_for_status()
+        raise SystemExit(0)
+    except requests.exceptions.ConnectionError as e:
+        print(f"연결 오류: {e}")
+        payload = {"text": f":warning: i-boss 크롤링 실패: 연결 오류 - {e}"}
+        requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10).raise_for_status()
+        raise SystemExit(0)
     print(f"수집된 공고: {len(listings)}건")
     for item in listings:
         print(f"  - {item['title']}")
